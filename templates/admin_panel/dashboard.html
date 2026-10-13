@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Marketplace admin</h1>
+{% include 'admin_panel/_nav.html' with active='dash' %}
+<div class="grid stats">
+  <div class="card stat"><div class="n">₹{{ gmv }}</div><div class="l">Total sales (GMV)</div></div>
+  <div class="card stat"><div class="n">₹{{ commission }}</div><div class="l">Commission earned</div></div>
+  <div class="card stat"><div class="n">{{ sellers }}</div><div class="l">Sellers</div></div>
+  <div class="card stat"><div class="n">{{ customers }}</div><div class="l">Customers</div></div>
+  <div class="card stat"><div class="n">{{ products }}</div><div class="l">Products</div></div>
+  <div class="card stat"><div class="n">{{ orders }}</div><div class="l">Orders</div></div>
+</div>
+<div class="grid two" style="margin-top:16px">
+  <div class="card"><h2>Pending seller verification</h2>
+    {% for s in pending %}<p><b>{{ s.store_name }}</b> <span class="muted">({{ s.user.username }})</span>
+      <form class="inline" method="post" action="{% url 'admin_seller_decision' s.id %}">{% csrf_token %}
+      <button name="decision" value="approved" class="btn sm green">Approve</button> <button name="decision" value="rejected" class="btn sm red">Reject</button></form></p>
+    {% empty %}<p class="muted">No pending requests.</p>{% endfor %}</div>
+  <div class="card"><h2>Recent orders</h2>
+    {% for o in recent_orders %}<p style="margin:5px 0">#{{ o.id }} · {{ o.customer.username }} · ₹{{ o.total }} <span class="muted">{{ o.created_at|date:"d M" }}</span></p>{% empty %}<p class="muted">No orders yet.</p>{% endfor %}</div>
+</div>
+{% endblock %}

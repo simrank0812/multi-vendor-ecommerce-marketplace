@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}My orders{% endblock %}
+{% block content %}
+<h1>My orders</h1>
+{% for o in orders %}
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div><b>Order #{{ o.id }}</b> <span class="muted">· {{ o.created_at|date:"d M Y, H:i" }}</span></div>
+    <div><b>₹{{ o.total }}</b> <a class="btn sm ghost" href="{% url 'order_detail' o.id %}">Track / details</a></div>
+  </div>
+  <p class="muted" style="margin:6px 0 0">{% for i in o.items.all %}{{ i.product_name }} ({{ i.get_status_display }}){% if not forloop.last %}, {% endif %}{% endfor %}</p>
+</div>
+{% empty %}<div class="card empty">No orders yet. <a href="{% url 'home' %}">Browse products</a></div>{% endfor %}
+{% endblock %}

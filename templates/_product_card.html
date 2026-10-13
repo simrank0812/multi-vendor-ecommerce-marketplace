@@ -1,0 +1,16 @@
+<div class="card pcard">
+  <a href="{{ p.get_absolute_url }}" class="thumb">
+    <span>{{ p.category.icon|default:"📦" }}</span>
+    {% if p.picture %}<img src="{{ p.picture }}" alt="{{ p.name }}" loading="lazy" onerror="this.remove()">{% endif %}
+    {% if p.low_stock %}<span class="flag">Only {{ p.stock }} left</span>{% elif not p.in_stock %}<span class="flag" style="background:#444">Sold out</span>{% endif %}
+  </a>
+  <div class="body">
+    <span class="tag">{{ p.category|default:"General" }}</span>
+    <a href="{{ p.get_absolute_url }}"><b>{{ p.name }}</b></a>
+    <span class="muted" style="font-size:.82rem">by {{ p.seller.seller_profile.store_name }}</span>
+    <div class="price">₹{{ p.price }}</div>
+    {% if p.in_stock %}
+      <button class="btn block add-to-cart" data-id="{{ p.id }}" data-url="{% url 'cart_add' %}" data-login="{% url 'login' %}?next={{ request.path }}">🛒 Add to cart</button>
+    {% else %}<button class="btn block" disabled>Out of stock</button>{% endif %}
+  </div>
+</div>

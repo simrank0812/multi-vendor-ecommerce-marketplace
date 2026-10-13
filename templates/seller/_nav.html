@@ -1,0 +1,6 @@
+<div class="side">
+  <a href="{% url 'seller_dashboard' %}" class="{% if active == 'dash' %}on{% endif %}">Dashboard</a>
+  <a href="{% url 'seller_products' %}" class="{% if active == 'products' %}on{% endif %}">Products</a>
+  <a href="{% url 'seller_orders' %}" class="{% if active == 'orders' %}on{% endif %}">Orders</a>
+  <a href="{% url 'seller_returns' %}" class="{% if active == 'returns' %}on{% endif %}">Returns</a>
+</div>

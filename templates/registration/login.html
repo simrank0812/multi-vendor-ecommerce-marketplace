@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-art"><h2>Welcome back 👋</h2><p>Sign in to track orders, manage your store or run the marketplace.</p></div>
+  <div class="auth-form"><h1>Login</h1>
+    <form method="post" class="stack">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ request.GET.next }}"><button class="btn block">Login</button></form>
+    <p class="muted">New here? <a href="{% url 'register' %}">Create an account</a></p>
+    <p class="muted" style="font-size:.8rem">Demo: admin/admin123 · seller1/seller123 · customer1/customer123</p></div>
+</div>
+{% endblock %}

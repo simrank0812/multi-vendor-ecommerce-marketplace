@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Commissions{% endblock %}
+{% block content %}
+<h1>Commission report</h1>
+{% include 'admin_panel/_nav.html' with active='comm' %}
+<div class="table-wrap"><table>
+<tr><th>Store</th><th>Sales</th><th>Commission earned</th></tr>
+{% for r in rows %}<tr><td>{{ r.store }}</td><td>₹{{ r.sales }}</td><td><b>₹{{ r.commission }}</b></td></tr>
+{% empty %}<tr><td colspan="3" class="empty">No sales yet.</td></tr>{% endfor %}
+</table></div>
+<p class="muted">Cancelled and returned items are excluded.</p>
+{% endblock %}

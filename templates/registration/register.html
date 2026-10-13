@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-art"><h2>Join MultiMart 🛍️</h2><p>Shop from many stores, or open your own and start selling today.</p></div>
+  <div class="auth-form"><h1>Create account</h1>
+    <form method="post" class="stack">{% csrf_token %}{{ form.as_p }}<button class="btn block">Register</button></form>
+    <p class="muted">Already registered? <a href="{% url 'login' %}">Login</a></p></div>
+</div>
+{% endblock %}

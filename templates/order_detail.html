@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<h1>Order #{{ order.id }}</h1>
+<div class="card" style="margin-bottom:16px"><b>Ship to:</b> {{ order.full_name }}, {{ order.phone }}<br>{{ order.address|linebreaksbr }}<br>
+<span class="muted">Payment: {{ order.get_payment_method_display }} · Total ₹{{ order.total }}</span></div>
+{% for i in order.items.all %}
+<div class="card" style="margin-bottom:12px">
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap">
+    <div><b>{{ i.product_name }}</b> × {{ i.quantity }} · ₹{{ i.line_total }}<br><span class="muted">Sold by {{ i.seller.seller_profile.store_name }}</span></div>
+    <span class="tag {% if i.status == 'delivered' %}ok{% elif i.status == 'cancelled' or i.status == 'returned' %}bad{% endif %}">{{ i.get_status_display }}</span>
+  </div>
+  {% if i.status != 'cancelled' and i.status != 'returned' %}
+  <div class="steps">{% for s in steps %}<div class="step {% if forloop.counter0 <= i.step_index %}done{% endif %}">{{ s|capfirst }}</div>{% endfor %}</div>{% endif %}
+  {% if i.can_cancel %}<form class="inline" method="post" action="{% url 'cancel_item' i.id %}" data-confirm="Cancel this item?">{% csrf_token %}<button class="btn sm red">Cancel item</button></form>{% endif %}
+  {% if i.can_return %}
+    <details style="margin-top:8px"><summary class="btn sm ghost" style="display:inline-block">Request return</summary>
+      <form method="post" action="{% url 'request_return' i.id %}" class="stack" style="margin-top:8px">{% csrf_token %}{{ return_form.as_p }}<button class="btn sm">Submit request</button></form></details>
+  {% elif i.return_request %}<p>Return request: <span class="tag {% if i.return_request.status == 'approved' %}ok{% elif i.return_request.status == 'rejected' %}bad{% else %}warn{% endif %}">{{ i.return_request.get_status_display }}</span></p>{% endif %}
+</div>{% endfor %}
+<a href="{% url 'my_orders' %}">← Back to orders</a>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="card grid two">
+  <div class="thumb detail-img"><span>{{ product.category.icon|default:"📦" }}</span>{% if product.picture %}<img src="{{ product.picture }}" alt="{{ product.name }}" onerror="this.remove()">{% endif %}</div>
+  <div>
+    <span class="tag">{{ product.category|default:"General" }}</span>
+    <h1>{{ product.name }}</h1>
+    <p class="muted">Sold by <b>{{ product.seller.seller_profile.store_name }}</b> · <a href="{% url 'home' %}?seller={{ product.seller_id }}">more from this store</a></p>
+    <div class="price" style="font-size:1.8rem">₹{{ product.price }}</div>
+    <p>{{ product.description|linebreaksbr }}</p>
+    {% if product.in_stock %}
+      <p>{% if product.low_stock %}<span class="tag warn">Only {{ product.stock }} left</span>{% else %}<span class="tag ok">In stock ({{ product.stock }})</span>{% endif %}</p>
+      <div style="display:flex;gap:10px;max-width:260px"><input type="number" id="detail-qty" value="1" min="1" max="{{ product.stock }}" style="width:80px">
+      <button class="btn add-to-cart" data-id="{{ product.id }}" data-url="{% url 'cart_add' %}" data-login="{% url 'login' %}?next={{ request.path }}">Add to cart</button></div>
+    {% else %}<span class="tag bad">Out of stock</span>{% endif %}
+  </div>
+</div>
+{% if related %}<h2 style="margin-top:28px">Related products</h2>
+<div class="grid products">{% for p in related %}{% include '_product_card.html' %}{% endfor %}</div>{% endif %}
+{% endblock %}

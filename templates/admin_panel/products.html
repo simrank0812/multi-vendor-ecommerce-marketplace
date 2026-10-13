@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<h1>All products</h1>
+{% include 'admin_panel/_nav.html' with active='products' %}
+<div class="table-wrap"><table>
+<tr><th>Product</th><th>Store</th><th>Category</th><th>Price</th><th>Stock</th><th>Visibility</th></tr>
+{% for p in products %}
+<tr><td>{{ p.name }}</td><td>{{ p.seller.seller_profile.store_name }}</td><td>{{ p.category|default:"-" }}</td><td>₹{{ p.price }}</td><td>{{ p.stock }}</td>
+<td><form class="inline" method="post" action="{% url 'admin_product_toggle' p.id %}">{% csrf_token %}
+<button class="btn sm {% if p.is_active %}red{% else %}green{% endif %}">{% if p.is_active %}Hide{% else %}Show{% endif %}</button></form></td></tr>
+{% endfor %}
+</table></div>
+{% endblock %}

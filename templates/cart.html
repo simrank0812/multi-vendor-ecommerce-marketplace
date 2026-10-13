@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1>Shopping cart</h1>
+{% if items %}
+<div class="table-wrap"><table>
+<tr><th>Product</th><th>Seller</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr>
+{% for i in items %}
+<tr data-item="{{ i.id }}">
+  <td><a href="{{ i.product.get_absolute_url }}">{{ i.product.name }}</a></td>
+  <td>{{ i.product.seller.seller_profile.store_name }}</td>
+  <td>₹{{ i.product.price }}</td>
+  <td><div class="qty">
+    <button class="qty-btn" data-action="dec" data-url="{% url 'cart_update' %}">−</button>
+    <span class="qty-val">{{ i.quantity }}</span>
+    <button class="qty-btn" data-action="inc" data-url="{% url 'cart_update' %}">+</button></div></td>
+  <td>₹<span class="line-total">{{ i.line_total }}</span></td>
+  <td><button class="btn sm red qty-btn" data-action="remove" data-url="{% url 'cart_update' %}">Remove</button></td>
+</tr>{% endfor %}
+</table></div>
+<div class="card right" style="margin-top:16px"><h2>Total: ₹<span id="cart-total">{{ total }}</span></h2>
+<a class="btn ghost" href="{% url 'home' %}">Continue shopping</a> <a class="btn" href="{% url 'checkout' %}">Proceed to checkout</a></div>
+{% else %}<div class="card empty">Your cart is empty. <a href="{% url 'home' %}">Start shopping</a></div>{% endif %}
+{% endblock %}

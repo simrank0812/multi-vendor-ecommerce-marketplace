@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Seller dashboard{% endblock %}
+{% block content %}
+<h1>{{ profile.store_name }} <span class="tag {% if profile.status == 'approved' %}ok{% elif profile.status == 'rejected' %}bad{% else %}warn{% endif %}">{{ profile.get_status_display }}</span></h1>
+{% if not profile.is_approved %}
+  <div class="card empty">
+    {% if profile.status == 'pending' %}⏳ Your store is awaiting verification by the marketplace admin. You can start listing products once approved.
+    {% else %}❌ Your seller registration was rejected. Please contact the marketplace admin.{% endif %}
+  </div>
+{% else %}
+{% include 'seller/_nav.html' with active='dash' %}
+<div class="grid stats">
+  <div class="card stat"><div class="n">₹{{ gross }}</div><div class="l">Gross sales</div></div>
+  <div class="card stat"><div class="n">₹{{ commission }}</div><div class="l">Commission ({{ profile.commission_rate }}%)</div></div>
+  <div class="card stat"><div class="n">₹{{ net }}</div><div class="l">Net earnings</div></div>
+  <div class="card stat"><div class="n">{{ orders_count }}</div><div class="l">Orders · {{ units }} units</div></div>
+  <div class="card stat"><div class="n">{{ products_count }}</div><div class="l">Products listed</div></div>
+</div>
+<div class="grid two" style="margin-top:16px">
+  <div class="card"><h2>Sales – last 7 days</h2><div id="chart" class="bars"></div></div>
+  <div class="card"><h2>Needs attention</h2>
+    <p><a href="{% url 'seller_orders' %}?status=placed">{{ pending_orders }} orders to process</a> · <a href="{% url 'seller_returns' %}">{{ pending_returns }} return requests</a></p>
+    <h2 style="margin-top:14px;font-size:1rem">Low stock</h2>
+    {% for p in low_stock %}<p style="margin:4px 0">{{ p.name }} <span class="tag {% if p.stock == 0 %}bad{% else %}warn{% endif %}">{{ p.stock }} left</span></p>{% empty %}<p class="muted">All products well stocked 🎉</p>{% endfor %}
+    <h2 style="margin-top:14px;font-size:1rem">Top sellers</h2>
+    {% for name, qty in top %}<p style="margin:4px 0">{{ forloop.counter }}. {{ name }} <span class="muted">({{ qty }} sold)</span></p>{% empty %}<p class="muted">No sales yet.</p>{% endfor %}
+  </div>
+</div>
+{{ chart|json_script:"chart-data" }}
+{% endif %}
+{% endblock %}

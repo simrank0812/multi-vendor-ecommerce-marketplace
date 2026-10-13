@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<h1>Checkout</h1>
+<div class="two-col">
+  <form method="post" class="card stack">{% csrf_token %}{{ form.as_p }}<button class="btn">Place order · ₹{{ total }}</button></form>
+  <div class="card"><h2>Order summary</h2>
+    {% for i in items %}<p>{{ i.product.name }} × {{ i.quantity }}<span style="float:right">₹{{ i.line_total }}</span></p>{% endfor %}
+    <hr><b>Total <span style="float:right">₹{{ total }}</span></b>
+  </div>
+</div>
+{% endblock %}

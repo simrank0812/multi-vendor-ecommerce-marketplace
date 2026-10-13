@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}My products{% endblock %}
+{% block content %}
+<h1>My products</h1>
+{% include 'seller/_nav.html' with active='products' %}
+<p><a class="btn" href="{% url 'seller_product_add' %}">+ Add product</a></p>
+<div class="table-wrap"><table>
+<tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Visible</th><th></th></tr>
+{% for p in products %}
+<tr><td>{{ p.name }}</td><td>{{ p.category|default:"-" }}</td><td>₹{{ p.price }}</td>
+<td><form method="post" action="{% url 'seller_stock' p.id %}" class="inline">{% csrf_token %}
+  <input type="number" name="stock" value="{{ p.stock }}" min="0" style="width:75px"> <button class="btn sm ghost">Update</button></form>
+  {% if p.stock == 0 %}<span class="tag bad">Out</span>{% elif p.low_stock %}<span class="tag warn">Low</span>{% endif %}</td>
+<td>{% if p.is_active %}<span class="tag ok">Yes</span>{% else %}<span class="tag bad">Hidden</span>{% endif %}</td>
+<td><a class="btn sm ghost" href="{% url 'seller_product_edit' p.id %}">Edit</a>
+<form class="inline" method="post" action="{% url 'seller_product_delete' p.id %}" data-confirm="Delete this product?">{% csrf_token %}<button class="btn sm red">Delete</button></form></td></tr>
+{% empty %}<tr><td colspan="6" class="empty">No products yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

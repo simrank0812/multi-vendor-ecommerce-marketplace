@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block hero %}{% if show_hero %}
+<section class="hero"><div class="hero-in">
+  <h1>Everything you love, from <span>every seller</span>, in one place.</h1>
+  <p>Discover products from independent stores. One cart, one checkout, trusted sellers.</p>
+  <form class="hero-search" method="get"><input name="q" placeholder="Search for headphones, shoes, books..."><button class="btn">Search</button></form>
+  <div class="hero-stats"><div><b>{{ stores|length }}+</b><span>Verified stores</span></div><div><b>{{ page.paginator.count }}+</b><span>Products</span></div><div><b>100%</b><span>Secure checkout</span></div></div>
+</div></section>
+<div class="features">
+  <div class="feature"><i>🚚</i><div><b>Fast delivery</b><span>Track every order</span></div></div>
+  <div class="feature"><i>🔒</i><div><b>Verified sellers</b><span>Admin-approved stores</span></div></div>
+  <div class="feature"><i>↩️</i><div><b>Easy returns</b><span>Request in one click</span></div></div>
+  <div class="feature"><i>💳</i><div><b>Secure payment</b><span>COD, UPI or card</span></div></div>
+</div>{% endif %}{% endblock %}
+
+{% block content %}
+{% if show_hero %}
+<div class="section-title"><h2>Shop by category</h2></div>
+<div class="cats">{% for c in categories %}
+  <a class="cat" href="?category={{ c.slug }}">{% if c.image_url %}<img src="{{ c.image_url }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}<span>{{ c.icon }} {{ c.name }}</span></a>{% endfor %}</div>
+
+<div class="section-title"><h2>Featured stores</h2></div>
+<div class="stores">{% for s in stores %}
+  <a class="store" href="?seller={{ s.user_id }}"><div class="av">{{ s.store_name|slice:":1" }}</div><div><b>{{ s.store_name }}</b><br><small>{{ s.description|truncatechars:38 }}</small></div></a>{% endfor %}</div>
+<div class="section-title"><h2>Trending products</h2></div>
+{% else %}<h1>Products</h1>{% endif %}
+
+<form id="filter-form" class="card filters" method="get">
+  <div style="flex:2;min-width:180px"><label>Search</label><input name="q" value="{{ f.q }}" placeholder="Search products..." style="width:100%"></div>
+  <div><label>Category</label><select name="category"><option value="">All</option>
+    {% for c in categories %}<option value="{{ c.slug }}" {% if f.category == c.slug %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div><label>Min ₹</label><input type="number" name="min_price" value="{{ f.min_price }}" style="width:90px" min="0"></div>
+  <div><label>Max ₹</label><input type="number" name="max_price" value="{{ f.max_price }}" style="width:90px" min="0"></div>
+  <div><label>Sort by</label><select name="sort">
+    <option value="new" {% if f.sort == 'new' %}selected{% endif %}>Newest</option>
+    <option value="low" {% if f.sort == 'low' %}selected{% endif %}>Price: low to high</option>
+    <option value="high" {% if f.sort == 'high' %}selected{% endif %}>Price: high to low</option></select></div>
+  <a class="btn ghost" href="{% url 'home' %}">Reset</a>
+</form>
+
+{% if page.object_list %}
+<div class="grid products">{% for p in page %}{% include '_product_card.html' %}{% endfor %}</div>
+<div class="pagination">
+  {% if page.has_previous %}<a href="?{{ querystring }}&page={{ page.previous_page_number }}">‹ Prev</a>{% endif %}
+  <span class="cur">{{ page.number }} / {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a href="?{{ querystring }}&page={{ page.next_page_number }}">Next ›</a>{% endif %}
+</div>
+{% else %}<div class="card empty">No products match your filters.</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Seller orders{% endblock %}
+{% block content %}
+<h1>Orders</h1>
+{% include 'seller/_nav.html' with active='orders' %}
+<div class="side">
+  <a href="{% url 'seller_orders' %}" class="{% if not status %}on{% endif %}">All</a>
+  {% for val, label in statuses %}<a href="?status={{ val }}" class="{% if status == val %}on{% endif %}">{{ label }}</a>{% endfor %}
+</div>
+<div class="table-wrap"><table>
+<tr><th>#</th><th>Customer</th><th>Item</th><th>Total</th><th>Commission</th><th>You earn</th><th>Status</th><th></th></tr>
+{% for i in items %}
+<tr><td>{{ i.order_id }}</td><td>{{ i.order.full_name }}<br><small class="muted">{{ i.order.created_at|date:"d M" }}</small></td>
+<td>{{ i.product_name }} × {{ i.quantity }}</td><td>₹{{ i.line_total }}</td><td>₹{{ i.commission_amount }}</td><td>₹{{ i.seller_earning }}</td>
+<td><span class="tag {% if i.status == 'delivered' %}ok{% elif i.status in 'cancelled returned' %}bad{% endif %}">{{ i.get_status_display }}</span></td>
+<td>{% if i.next_status %}<form class="inline" method="post" action="{% url 'seller_advance' i.id %}">{% csrf_token %}<button class="btn sm green">Mark {{ i.next_status }}</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="8" class="empty">No orders found.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

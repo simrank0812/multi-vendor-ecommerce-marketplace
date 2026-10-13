@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Sellers{% endblock %}
+{% block content %}
+<h1>Sellers</h1>
+{% include 'admin_panel/_nav.html' with active='sellers' %}
+<div class="table-wrap"><table>
+<tr><th>Store</th><th>Owner</th><th>Status</th><th>Commission %</th><th>Verification</th></tr>
+{% for s in profiles %}
+<tr><td><b>{{ s.store_name }}</b><br><small class="muted">{{ s.description|truncatechars:60 }}</small></td><td>{{ s.user.username }}<br><small>{{ s.user.email }}</small></td>
+<td><span class="tag {% if s.status == 'approved' %}ok{% elif s.status == 'rejected' %}bad{% else %}warn{% endif %}">{{ s.get_status_display }}</span></td>
+<td><form class="inline" method="post" action="{% url 'admin_seller_commission' s.id %}">{% csrf_token %}
+ <input type="number" step="0.01" min="0" max="100" name="commission_rate" value="{{ s.commission_rate }}" style="width:80px"> <button class="btn sm ghost">Save</button></form></td>
+<td><form class="inline" method="post" action="{% url 'admin_seller_decision' s.id %}">{% csrf_token %}
+ {% if s.status != 'approved' %}<button name="decision" value="approved" class="btn sm green">Approve</button>{% endif %}
+ {% if s.status != 'rejected' %}<button name="decision" value="rejected" class="btn sm red">Reject</button>{% endif %}</form></td></tr>
+{% empty %}<tr><td colspan="5" class="empty">No sellers registered.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}
